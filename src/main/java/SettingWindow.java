@@ -91,6 +91,21 @@ public class SettingWindow extends JFrame {
         //обращаемся к методу и вызываем запуск игры
         gameWindow.startGame(gameMode, fieldSize, winLength);
         setVisible(false);//скроем окно
+
+        //словие при выборе кнопки игрок против игрока
+        if (humanVsHuman.isSelected()) {
+            gameMode = GameMap.MODE_VS_HUMAN2;
+        } else {
+            gameMode = GameMap.MODE_VS_HUMAN;
+        }
+        //int fieldSize = sliderFieldSize.getValue();
+        //int winLength = sliderWinLength.getValue();
+
+
+        //обращаемся к методу и вызываем запуск игры
+        gameWindow.startGame(gameMode, fieldSize, winLength);
+        setVisible(false);
+
     }
 
 }

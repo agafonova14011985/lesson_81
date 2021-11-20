@@ -8,13 +8,16 @@ import java.util.Random;
 public class GameMap extends JPanel {
     public static final int MODE_VS_AI = 0;
     public static final int MODE_VS_HUMAN = 1;
+    public static final int MODE_VS_HUMAN2 = 0;
     public static final Random RANDOM = new Random();
     private static final int DOT_HUMAN = 1;
+    private static final int DOT_HUMAN2 = 2;
     private static final int DOT_AI = 2;
     private static final int DOT_EMPTY = 0;
     private static final int DOT_PADDING = 7;
     private static final int STATE_DRAW = 0;
     private static final int STATE_WIN_HUMAN = 1;
+    private static final int STATE_WIN_HUMAN2 = 2;
     private static final int STATE_WIN_AI = 2;
 
     private int stateGameOver;
@@ -38,28 +41,62 @@ public class GameMap extends JPanel {
             public void mouseReleased(MouseEvent e) {
                 super.mouseReleased(e);
                 update(e);
+                humanVsHuman(e);
+
             }
         });
     }
     //метод реагирующий на клик мышкой, сдделать
     private void update(MouseEvent e) {
-        if (isGameOver || !isInitialized) {
-            return; //если гамовер или не инициализированна игра то ни чего не делаем
-        }//реакция на клик мыши
-        //еесли
-        if (!playerTurn(e)) {
-            return;
-        }//проверка на победу
+            if (isGameOver || !isInitialized) {
+                return; //если гамовер или не инициализированна игра то ни чего не делаем
+            }//реакция на клик мыши
+            //еесли
+            if (!playerTurn(e)) {
+                return;
+            }//проверка на победу
         if (gameCheck(DOT_HUMAN, STATE_WIN_HUMAN)) {
             return;//если победа то прерывается игра
         }
-        //aiTurn();
+        aiTurn();
         repaint();
         //проверка статуса игры
         if (gameCheck(DOT_AI, STATE_WIN_AI)) {
             return;
         }
     }
+
+    //метод игрок против игрока
+    void humanVsHuman(MouseEvent e) {
+        if (isGameOver || !isInitialized) {
+            return; }
+
+        if (!playerTurn(e)) {
+            return;
+        }//проверка на победу
+        if (gameCheck(DOT_HUMAN, STATE_WIN_HUMAN)) {
+            return;//если победа то прерывается игра
+        }
+        hunan2(e);
+        repaint();
+        //проверка статуса игры
+        if (gameCheck(DOT_HUMAN2, STATE_WIN_HUMAN2)) {
+            return;
+        }
+    }
+
+    private boolean hunan2(MouseEvent event) {
+        int cellX = event.getX() / cellWidth;
+        int cellY = event.getY() / cellHeight;
+        if (!isCellValid(cellY, cellX) || !isCellEmpty(cellY, cellX)) {
+            return false;
+        }
+        field[cellY][cellX] = DOT_HUMAN2;
+        repaint();
+        return true;
+    }
+
+
 //ход игрока
     private boolean playerTurn(MouseEvent event) {
         int cellX = event.getX() / cellWidth;
@@ -71,7 +108,7 @@ public class GameMap extends JPanel {
         repaint();//вызываем метод для перересовки поля
         return true;
     }
-
+//
     @Override
     protected void paintComponent(Graphics g) {
         //рисуем метод рисующий линии
@@ -110,7 +147,7 @@ public class GameMap extends JPanel {
                             y * cellHeight + DOT_PADDING,
                             cellWidth - DOT_PADDING * 2,
                             cellHeight - DOT_PADDING * 2);
-                    //в противном случае красный прямоугольник
+                    //в противном случае красный прямоугольник fillRect
                 } else {
                     g.setColor(Color.RED);
                     g.fillRect(x * cellWidth + DOT_PADDING,
@@ -148,7 +185,9 @@ public class GameMap extends JPanel {
             //если ничья то пишем ничья и тд
             case STATE_DRAW -> g.drawString("DRAW", getWidth() / 4, getHeight() / 2);
             case STATE_WIN_HUMAN -> g.drawString("HUMAN WIN!", getWidth() / 4, getHeight() / 2);
+           //_HUMAN2 -> g.drawString("HUMAN2 WIN!", getWidth() / 4, getHeight() / 2);
             case STATE_WIN_AI -> g.drawString("AI WIN", getWidth() / 4, getHeight() / 2);
+            default -> throw new IllegalStateException("Unexpected value: " + stateGameOver);
         }
     }
 
