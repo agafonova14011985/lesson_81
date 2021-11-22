@@ -9,13 +9,16 @@ public class GameMap extends JPanel {
     public static final int MODE_VS_AI = 0;
     public static final int MODE_VS_HUMAN = 1;
     public static final Random RANDOM = new Random();
+    public static final int MODE_VS_HUMAN2 = 3;
     private static final int DOT_HUMAN = 1;
     private static final int DOT_AI = 2;
+    private static final int DOT_HUMAN2 = 3;
     private static final int DOT_EMPTY = 0;
     private static final int DOT_PADDING = 7;
     private static final int STATE_DRAW = 0;
     private static final int STATE_WIN_HUMAN = 1;
     private static final int STATE_WIN_AI = 2;
+    private static final int STATE_WIN_HUMAN2 = 3;
 
     private int stateGameOver;
     private int[][] field;
@@ -53,14 +56,45 @@ public class GameMap extends JPanel {
         if (gameCheck(DOT_HUMAN, STATE_WIN_HUMAN)) {
             return;//если победа то прерывается игра
         }
-        //aiTurn();
+        aiTurn();
         repaint();
         //проверка статуса игры
         if (gameCheck(DOT_AI, STATE_WIN_AI)) {
             return;
         }
+
+        /////////////////////////1
+        if (isGameOver || !isInitialized) {
+            return; //если гамовер или не инициализированна игра то ни чего не делаем
+        }//реакция на клик мыши
+
+        if (!playerTurn2(e)) {
+            return;
+        }//проверка на победу
+        if (gameCheck(DOT_HUMAN, STATE_WIN_HUMAN)) {
+            return;//если победа то прерывается игра
+        }
+        //humanTurn();
+        repaint();
+        //проверка статуса игры
+        if (gameCheck(DOT_HUMAN2, STATE_WIN_HUMAN2)) {
+            return;
+        }
+
     }
-//ход игрока
+///////////////////////////
+private boolean playerTurn2(MouseEvent event) {
+    int cellX = event.getX() / cellWidth;
+    int cellY = event.getY() / cellHeight;
+    if (!isCellValid(cellY, cellX) || !isCellEmpty(cellY, cellX)) {
+        return false;//если пустая то мы ничего не делаем
+    }
+    field[cellY][cellX] = DOT_HUMAN2;repaint();//вызываем метод для перересовки поля
+    return true;
+}
+
+
+    //ход игрока
     private boolean playerTurn(MouseEvent event) {
         int cellX = event.getX() / cellWidth;
         int cellY = event.getY() / cellHeight;
@@ -78,7 +112,7 @@ public class GameMap extends JPanel {
         super.paintComponent(g);
         render(g);
     }
-//рисование
+    //рисование
     private void render(Graphics g) {
         if (!isInitialized) {
             return;
@@ -124,7 +158,7 @@ public class GameMap extends JPanel {
             showGameOverMessage(g);
         }
     }
-//метод старта игры
+    //метод старта игры
     public void startNewGame(int gameMode, int fieldSize, int winLength) {
         this.gameMode = gameMode;
         fieldSizeX = fieldSize;
@@ -136,7 +170,7 @@ public class GameMap extends JPanel {
         isGameOver = false;
         repaint();//обновилось что бы
     }
-//метоод выводящий сообщение о победе
+    //метоод выводящий сообщение о победе
     private void showGameOverMessage(Graphics g) {
         g.setColor(Color.DARK_GRAY);
         //прямоугольнок
@@ -152,9 +186,10 @@ public class GameMap extends JPanel {
         }
     }
 
+
     private  boolean gameCheck(int dot, int stateGameOver) {
-        
-if (checkWin(dot, winLength)) {
+
+        if (checkWin(dot, winLength)) {
             this.stateGameOver = stateGameOver;
             isGameOver = true;
             repaint();
@@ -178,6 +213,7 @@ if (checkWin(dot, winLength)) {
         }
         return true;
     }
+
 
 
     private void aiTurn() {
@@ -219,6 +255,8 @@ if (checkWin(dot, winLength)) {
     }
 
 
+
+
     private boolean checkWin(int dot, int length) {
         for (int y = 0; y < fieldSizeY; y++) {            // проверяем всё поле
             for (int x = 0; x < fieldSizeX; x++) {
@@ -249,5 +287,8 @@ if (checkWin(dot, winLength)) {
     private boolean isCellEmpty(int y, int x) {
         return field[y][x] == DOT_EMPTY;
     }
+
+    //void twoPlayersMode(){
+      //  if()
 
 }
