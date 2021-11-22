@@ -98,8 +98,8 @@ public class SettingWindow extends JFrame {
         } else {
             gameMode = GameMap.MODE_VS_HUMAN;
         }
-        //int fieldSize = sliderFieldSize.getValue();
-        //int winLength = sliderWinLength.getValue();
+         fieldSize = sliderFieldSize.getValue();
+         winLength = sliderWinLength.getValue();
 
 
         //обращаемся к методу и вызываем запуск игры
